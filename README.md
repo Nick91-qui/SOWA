@@ -1,6 +1,6 @@
-# Secure Online Exam Web Application
+# SOWA - Secure Online Web Assessment
 
-This project is a secure online exam web application designed to provide a robust and reliable platform for conducting online examinations. It features a FastAPI backend for API services and a Next.js frontend for the user interface, with integrated security monitoring and deployment configurations.
+This project is a Secure Online Web Assessment (SOWA) application designed to provide a robust and reliable platform for conducting online examinations. It features a FastAPI backend for API services and a Next.js frontend for the user interface, with integrated security monitoring and deployment configurations.
 
 ## Project Structure
 
