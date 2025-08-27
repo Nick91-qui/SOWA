@@ -10,8 +10,8 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.security import create_access_token, verify_password
 from app.api import deps
-from app.models.user import User
-from app.schemas.user import Token
+from app.models.user import User as DBUser
+from app.schemas.user import Token, User as UserSchema
 
 router = APIRouter()
 
@@ -23,7 +23,7 @@ def login_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = db.query(User).filter(User.email == form_data.username).first()
+    user = db.query(DBUser).filter(DBUser.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,9 +37,9 @@ def login_access_token(
         "token_type": "bearer",
     }
 
-@router.post("/login/test-token", response_model=User)
-def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
+@router.post("/login/test-token", response_model=UserSchema)
+def test_token(current_user: DBUser = Depends(deps.get_current_user)) -> Any:
     """
     Test access token
     """
-    return current_user
+    return UserSchema.from_orm(current_user)

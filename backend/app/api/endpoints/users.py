@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.api import deps
 from app.core.security import get_password_hash
-from app.models.user import User
+from app.models.user import User as DBUser
 from app.schemas.user import UserCreate, User as UserSchema
 
 router = APIRouter()
@@ -21,24 +21,24 @@ def create_user(
     """
     Create new user
     """
-    user = db.query(User).filter(User.email == user_in.email).first()
+    user = db.query(DBUser).filter(DBUser.email == user_in.email).first()
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this username already exists in the system.",
         )
     hashed_password = get_password_hash(user_in.password)
-    user = User(email=user_in.email, hashed_password=hashed_password)
+    user = DBUser(email=user_in.email, hashed_password=hashed_password)
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    return UserSchema.from_orm(user)
 
 @router.get("/me", response_model=UserSchema)
 def read_user_me(
-    current_user: User = Depends(deps.get_current_user),
+    current_user: DBUser = Depends(deps.get_current_user),
 ) -> Any:
     """
     Get current user
     """
-    return current_user
+    return UserSchema.from_orm(current_user)
