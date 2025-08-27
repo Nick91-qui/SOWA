@@ -1,6 +1,9 @@
 # backend/app/core/config.py
 
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Online Exam Platform"

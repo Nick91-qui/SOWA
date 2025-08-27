@@ -1,8 +1,12 @@
 # backend/app/main.py
 
+from dotenv import load_dotenv
+
 from fastapi import FastAPI
 from app.api.api import api_router
 from app.core.config import settings
+
+load_dotenv()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
