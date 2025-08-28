@@ -1,11 +1,10 @@
-'use client';
+// 'use client';
 import type { Metadata } from "next";
 
 
-import { useEffect } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { setupSecurityMonitoring } from '../../utils/securityMonitor';
+ import "./globals.css";
+ import SecurityMonitor from './components/SecurityMonitor';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,17 +26,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useEffect(() => {
-    setupSecurityMonitoring();
-  }, []);
-
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
-}
+     <html lang="en">
+       <body
+         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+       >
+         {children}
+         <SecurityMonitor />
+       </body>
+     </html>
+   );
+ }
