@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.api import api_router
 from app.core.config import settings
+from app.models import user, fraud_log, exam
 
 load_dotenv()
 
