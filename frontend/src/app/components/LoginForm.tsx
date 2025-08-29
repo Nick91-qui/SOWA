@@ -37,9 +37,9 @@ const LoginForm = () => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login/access-token`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -76,6 +76,7 @@ const LoginForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
       </div>
       <div className="mb-6">
@@ -87,6 +88,7 @@ const LoginForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="current-password"
         />
       </div>
       <div className="flex items-center justify-between">

@@ -42,7 +42,7 @@ const RegisterForm = () => {
     console.log('Register attempt with:', { email, password });
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/open`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,6 +86,7 @@ const RegisterForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
       </div>
       <div className="mb-4">
@@ -97,6 +98,7 @@ const RegisterForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="new-password"
         />
       </div>
       <div className="mb-6">
@@ -108,6 +110,7 @@ const RegisterForm = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          autoComplete="new-password"
         />
       </div>
       <div className="flex items-center justify-between">
