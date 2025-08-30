@@ -1,133 +1,159 @@
-// frontend/src/app/exam/page.tsx
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { setupSecurityMonitoring } from '../../../utils/securityMonitor';
+import { endExamSession } from '../api/examService';
+import { ExamResponse } from '@/types';
 import QuestionDisplay from '../components/QuestionDisplay';
-import ExamTimer from '../components/ExamTimer';
+import ExamHeader from '@/app/components/exam/ExamHeader';
+import ExamProgress from '@/app/components/exam/ExamProgress';
+import ExamNavigation from '@/app/components/exam/ExamNavigation';
+import ExamContainer from '@/app/components/exam/ExamContainer';
+import { useExamSession } from '@/hooks/useExamSession';
+import { useExamAnswers, clearExpiredExamData } from '@/hooks/useExamAnswers';
+import { useExamSubmission } from '@/hooks/useExamSubmission';
+import { useExamNavigation } from '@/hooks/useExamNavigation';
+import ExamLoading from '@/app/components/exam/ExamLoading';
+import ExamError from '@/app/components/exam/ExamError';
+import ExamFinished from '@/app/components/exam/ExamFinished';
 
-const mockQuestions = [
-  {
-    id: 'q1',
-    text: 'Qual é a capital do Brasil?',
-    options: ['Rio de Janeiro', 'São Paulo', 'Brasília', 'Belo Horizonte'],
-    type: 'single_choice',
-  },
-  {
-    id: 'q2',
-    text: 'Quais destes são frameworks JavaScript?',
-    options: ['React', 'Angular', 'Vue', 'Python'],
-    type: 'multiple_choice',
-  },
-  {
-    id: 'q3',
-    text: 'Descreva o conceito de inteligência artificial.',
-    options: [],
-    type: 'text_input',
-  },
-];
 
 const ExamPage = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
-  const [examFinished, setExamFinished] = useState(false);
+    const router = useRouter();
+    const { questions, examSession, isLoading, error, setExamSession } = useExamSession();
+    const [examFinished, setExamFinished] = useState(false);
+    const { answers, handleAnswerChange, setAnswers } = useExamAnswers(examSession, examFinished);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const { isSubmitting, error: submitError, confirmSubmit } = useExamSubmission(examSession, setExamFinished, setAnswers);
+    const { currentQuestionIndex, handleNextQuestion, handlePreviousQuestion } = useExamNavigation(questions, examFinished, confirmSubmit, answers);
 
-  const handleAnswerChange = (questionId: string, answer: string | string[]) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: answer,
-    }));
+
+
+    const handleSubmitClick = () => {
+    setShowConfirmModal(true);
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < mockQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setExamFinished(true);
-      submitExam();
-    }
-  };
-
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const submitExam = async () => {
-    setExamFinished(true);
-    console.log('Exame finalizado! Respostas:', answers);
-    // TODO: Enviar respostas para o backend
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exam/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}` // Adicionar token de autenticação se necessário
-        },
-        body: JSON.stringify({ answers }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || 'Erro ao submeter o exame');
-      }
-
-      const data = await response.json();
-      console.log('Exame submetido com sucesso:', data);
-      // TODO: Redirecionar para a página de resultados com base na resposta do backend
-
-    } catch (err: any) {
-      console.error('Erro na submissão do exame:', err.message);
-      // Tratar erro, talvez exibir uma mensagem para o usuário
-    }
+  const handleConfirmSubmit = () => {
+    setShowConfirmModal(false);
+    confirmSubmit(answers);
   };
 
   const handleTimeUp = async () => {
     console.log('Tempo esgotado! Respostas:', answers);
-    await submitExam();
+    await confirmSubmit(answers);
   };
 
-  const currentQuestion = mockQuestions[currentQuestionIndex];
+  const currentQuestion = questions[currentQuestionIndex];
+
+  useEffect(() => {
+    if (examFinished && examSession) {
+      const timer = setTimeout(() => {
+        router.push(`/results/${examSession.id}`);
+      }, 3000); // Redirect after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [examFinished, examSession, router]);
+
+  useEffect(() => {
+    setupSecurityMonitoring();
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!examFinished) {
+        event.preventDefault();
+        event.returnValue = ''; // Required for Chrome
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [examFinished]);
+
+
+
+  if (isLoading) {
+    return <ExamLoading />;
+  }
+
+  if (error || submitError) {
+    return <ExamError message={error || submitError} />;
+  }
 
   if (examFinished) {
+    return <ExamFinished isSubmitting={isSubmitting} submitError={submitError} />;
+  }
+
+  if (!questions.length || !examSession || !currentQuestion) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-100">
-        <h1 className="text-4xl font-bold mb-8 text-gray-800">Exame Concluído!</h1>
-        <p className="text-lg text-gray-700">Suas respostas foram registradas. Redirecionando para os resultados...</p>
+        <h1 className="text-4xl font-bold mb-8 text-gray-800">Nenhum exame disponível, sessão não iniciada ou questão inválida.</h1>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 sm:p-24 bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Exame SOWA</h1>
-      <ExamTimer durationInMinutes={1} onTimeUp={handleTimeUp} />
+    <>
+      <ExamContainer>
+      <ExamHeader
+        examTitle="Exame SOWA"
+        durationInMinutes={examSession?.duration}
+        onTimeUp={handleTimeUp}
+      />
+      <ExamProgress
+        currentQuestionIndex={currentQuestionIndex}
+        totalQuestions={questions.length}
+      />
 
       <div className="w-full max-w-2xl">
         <QuestionDisplay
-          question={currentQuestion as { id: string; text: string; options: string[]; type: "single_choice" | "multiple_choice" | "text_input" }}
+          question={currentQuestion}
           onAnswerChange={handleAnswerChange}
-          currentAnswer={answers[currentQuestion.id] || (currentQuestion.type === 'multiple_choice' ? [] : '')}
+          currentAnswer={answers[currentQuestion.id] || (['multiple_choice', 'multiple_selection'].includes(currentQuestion.type) ? [] : '')}
         />
 
-        <div className="flex justify-between mt-6">
-          <button
-            onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-          <button
-            onClick={handleNextQuestion}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {currentQuestionIndex === mockQuestions.length - 1 ? 'Finalizar Exame' : 'Próxima'}
-          </button>
+        <ExamNavigation
+          currentQuestionIndex={currentQuestionIndex}
+          totalQuestions={questions.length}
+          isSubmitting={isSubmitting}
+          handlePreviousQuestion={handlePreviousQuestion}
+          handleNextQuestion={handleNextQuestion}
+          handleSubmitClick={handleSubmitClick}
+        />
+      </div>
+    </ExamContainer>
+
+      {showConfirmModal && (
+      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Confirmar Finalização do Exame</h2>
+            <p className="mb-2">Tem certeza de que deseja finalizar o exame? Esta ação não pode ser desfeita.</p>
+            <div className="mb-6 text-sm text-gray-700">
+              <p>Questões Respondidas: {Object.keys(answers).length}</p>
+              <p>Questões Não Respondidas: {questions.length - Object.keys(answers).length}</p>
+            </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={() => setShowConfirmModal(false)}
+              className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleConfirmSubmit}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Confirmar
+            </button>
+          </div>
         </div>
       </div>
-    </main>
+    )}
+    </>
   );
 };
 

@@ -7,7 +7,7 @@ interface QuestionDisplayProps {
     id: string;
     text: string;
     options: string[];
-    type: 'single_choice' | 'multiple_choice' | 'text_input';
+    type: 'single_choice' | 'multiple_choice' | 'multiple_selection' | 'text_input';
   };
   onAnswerChange: (questionId: string, answer: string | string[]) => void;
   currentAnswer: string | string[];
