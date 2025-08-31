@@ -3,6 +3,11 @@ import { useRouter } from 'next/navigation';
 import { getAvailableExams, startExamSession } from '@/app/api/examService';
 import { Exam, ExamSession, Question } from '@/types';
 
+/**
+ * @fileoverview Hook para gerenciar a sessão de um exame, incluindo o carregamento de exames disponíveis
+ * e o início de uma nova sessão de exame.
+ * @hook useExamSession
+ */
 export const useExamSession = () => {
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -11,6 +16,13 @@ export const useExamSession = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    /**
+     * Carrega os exames disponíveis e inicia uma nova sessão de exame.
+     * Define as questões do exame e a sessão do exame após o carregamento bem-sucedido.
+     * Em caso de erro, define a mensagem de erro e interrompe o carregamento.
+     * @function loadExam
+     * @async
+     */
     const loadExam = async () => {
       try {
         setIsLoading(true);

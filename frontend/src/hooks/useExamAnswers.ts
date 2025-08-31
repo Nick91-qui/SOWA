@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ExamSession, Question } from '@/types';
 
-// Utility function for debouncing
+/**
+ * Função utilitária para debouncing.
+ * Garante que uma função seja executada apenas após um certo atraso
+ * desde a última vez que foi invocada.
+ * 
+ * @param {Function} func A função a ser 'debounced'.
+ * @param {number} delay O atraso em milissegundos antes da execução da função.
+ * @returns {Function} A função 'debounced'.
+ */
 const debounce = (func: Function, delay: number) => {
   let timeout: NodeJS.Timeout;
   return (...args: any[]) => {
@@ -10,8 +18,16 @@ const debounce = (func: Function, delay: number) => {
   };
 };
 
+/**
+ * Tempo de expiração para os dados do exame no localStorage (24 horas em milissegundos).
+ */
 const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
+/**
+ * Limpa dados de exames expirados do localStorage.
+ * Percorre todos os itens do localStorage que começam com 'exam-' e terminam com '-answers',
+ * verifica se o timestamp salvo excedeu o tempo de expiração e remove os dados expirados ou corrompidos.
+ */
 export const clearExpiredExamData = () => {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -33,6 +49,14 @@ export const clearExpiredExamData = () => {
   }
 };
 
+/**
+ * Hook personalizado para gerenciar as respostas do usuário durante uma sessão de exame.
+ * Salva e carrega automaticamente as respostas do localStorage e fornece uma função para atualizar as respostas.
+ * 
+ * @param {ExamSession | null} examSession Os dados da sessão do exame atual.
+ * @param {boolean} examFinished Indica se o exame foi finalizado.
+ * @returns {{ answers: Record<string, string | string[]>, handleAnswerChange: (questionId: string, answer: string | string[]) => void, setAnswers: React.Dispatch<React.SetStateAction<Record<string, string | string[]>>> }} Um objeto contendo as respostas, a função para lidar com a mudança de resposta e a função para definir as respostas.
+ */
 export const useExamAnswers = (examSession: ExamSession | null, examFinished: boolean) => {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
 
@@ -72,6 +96,13 @@ export const useExamAnswers = (examSession: ExamSession | null, examFinished: bo
     }
   }, [examSession, examFinished]);
 
+  /**
+   * Callback para lidar com a mudança de resposta de uma questão.
+   * Atualiza o estado das respostas com a nova resposta para a questão específica.
+   * 
+   * @param {string} questionId O ID da questão cuja resposta foi alterada.
+   * @param {string | string[]} answer A nova resposta para a questão (pode ser uma string ou um array de strings).
+   */
   const handleAnswerChange = useCallback((questionId: string, answer: string | string[]) => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,

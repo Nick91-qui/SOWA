@@ -1,5 +1,11 @@
 import Link from 'next/link';
 
+/**
+ * Componente principal da página inicial da aplicação SOWA.
+ * Renderiza uma página de boas-vindas com links para login e registro.
+ * 
+ * @returns {JSX.Element} Uma página de boas-vindas com links de navegação.
+ */
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8 sm:p-24">

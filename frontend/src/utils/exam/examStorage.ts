@@ -3,6 +3,12 @@ import { ExamResponse } from '@/types';
 const EXAM_ANSWERS_PREFIX = 'examAnswers_';
 const EXAM_SESSION_PREFIX = 'examSession_';
 
+/**
+ * Salva as respostas de um exame no localStorage.
+ * @function saveExamAnswers
+ * @param {string} examId - O ID do exame.
+ * @param {Record<string, any>} answers - As respostas do exame a serem salvas.
+ */
 export const saveExamAnswers = (examId: string, answers: Record<string, any>) => {
   try {
     localStorage.setItem(`${EXAM_ANSWERS_PREFIX}${examId}`, JSON.stringify(answers));
@@ -11,6 +17,12 @@ export const saveExamAnswers = (examId: string, answers: Record<string, any>) =>
   }
 };
 
+/**
+ * Carrega as respostas de um exame do localStorage.
+ * @function loadExamAnswers
+ * @param {string} examId - O ID do exame.
+ * @returns {Record<string, any>} As respostas do exame carregadas ou um objeto vazio se não houver respostas.
+ */
 export const loadExamAnswers = (examId: string): Record<string, any> => {
   try {
     const storedAnswers = localStorage.getItem(`${EXAM_ANSWERS_PREFIX}${examId}`);
@@ -21,6 +33,11 @@ export const loadExamAnswers = (examId: string): Record<string, any> => {
   }
 };
 
+/**
+ * Limpa as respostas de um exame do localStorage.
+ * @function clearExamAnswers
+ * @param {string} examId - O ID do exame.
+ */
 export const clearExamAnswers = (examId: string) => {
   try {
     localStorage.removeItem(`${EXAM_ANSWERS_PREFIX}${examId}`);
@@ -29,6 +46,11 @@ export const clearExamAnswers = (examId: string) => {
   }
 };
 
+/**
+ * Salva a sessão de um exame no localStorage.
+ * @function saveExamSession
+ * @param {ExamResponse} examSession - A sessão do exame a ser salva.
+ */
 export const saveExamSession = (examSession: ExamResponse) => {
   try {
     localStorage.setItem(`${EXAM_SESSION_PREFIX}${examSession.id}`, JSON.stringify(examSession));
@@ -37,6 +59,12 @@ export const saveExamSession = (examSession: ExamResponse) => {
   }
 };
 
+/**
+ * Carrega a sessão de um exame do localStorage.
+ * @function loadExamSession
+ * @param {string} examId - O ID do exame.
+ * @returns {ExamResponse | null} A sessão do exame carregada ou null se não houver sessão.
+ */
 export const loadExamSession = (examId: string): ExamResponse | null => {
   try {
     const storedSession = localStorage.getItem(`${EXAM_SESSION_PREFIX}${examId}`);
@@ -47,6 +75,11 @@ export const loadExamSession = (examId: string): ExamResponse | null => {
   }
 };
 
+/**
+ * Limpa a sessão de um exame do localStorage.
+ * @function clearExamSession
+ * @param {string} examId - O ID do exame.
+ */
 export const clearExamSession = (examId: string) => {
   try {
     localStorage.removeItem(`${EXAM_SESSION_PREFIX}${examId}`);
@@ -55,6 +88,11 @@ export const clearExamSession = (examId: string) => {
   }
 };
 
+/**
+ * Limpa dados de exames expirados do localStorage.
+ * Remove respostas e sessões de exames que excederam 24 horas de armazenamento.
+ * @function clearExpiredExamData
+ */
 export const clearExpiredExamData = () => {
   const now = new Date().getTime();
   const twentyFourHours = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
