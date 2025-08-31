@@ -3,11 +3,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +57,8 @@ const LoginForm = () => {
 
       const data = await response.json();
       console.log('Login successful:', data);
-      // TODO: Salvar token e redirecionar
+      localStorage.setItem('token', data.access_token);
+      router.push('/dashboard');
 
     } catch (err: any) {
       setError('Ocorreu um erro inesperado. Por favor, tente novamente.');
