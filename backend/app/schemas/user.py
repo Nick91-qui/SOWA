@@ -8,10 +8,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    role: Optional[str] = "student"
 
 class User(UserBase):
     id: int
     is_active: bool
+    role: str
 
     class Config:
         from_attributes = True # Alterado de orm_mode = True

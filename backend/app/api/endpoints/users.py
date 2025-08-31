@@ -1,6 +1,6 @@
 # backend/app/api/endpoints/users.py
 
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -17,6 +17,7 @@ def create_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreate,
+    role: Optional[str] = "student", # Adiciona o parâmetro role com valor padrão 'student'
 ) -> Any:
     """
     Create new user
@@ -28,7 +29,7 @@ def create_user(
             detail="The user with this username already exists in the system.",
         )
     hashed_password = get_password_hash(user_in.password)
-    user = DBUser(email=user_in.email, hashed_password=hashed_password)
+    user = DBUser(email=user_in.email, hashed_password=hashed_password, role=role)
     db.add(user)
     db.commit()
     db.refresh(user)
