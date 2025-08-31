@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SOWA Frontend
 
-## Getting Started
+Este documento fornece informações específicas sobre o frontend do projeto SOWA, desenvolvido em Next.js e React para oferecer uma interface de usuário intuitiva e segura.
 
-First, run the development server:
+## Funcionalidades do Frontend
 
+### 1. Interface de Usuário
+
+- Design responsivo e moderno com Tailwind CSS.
+- Fluxos de usuário claros para alunos e professores.
+
+### 2. Interação com o Backend
+
+- Consumo de APIs RESTful do backend para autenticação, gerenciamento de usuários, provas e turmas.
+- Exibição de dados de provas e resultados.
+
+### 3. Monitoramento de Segurança (Client-Side)
+
+- Detecção de eventos suspeitos durante a realização de provas:
+  - Saída do modo tela cheia.
+  - Troca de abas ou aplicativos.
+  - Uso de atalhos de teclado (ex: `Ctrl+C`, `Ctrl+V`, `Alt+Tab`).
+  - Tentativas de abrir o console do navegador (`F12`, `Ctrl+Shift+I`).
+- Envio desses eventos para o backend para registro e análise.
+
+### 4. Funcionalidades Específicas
+
+- **Para Alunos:**
+  - Login e visualização de provas disponíveis.
+  - Interface para realização de provas com temporizador.
+  - Visualização de notas e feedback após a correção.
+- **Para Professores:**
+  - Login e acesso a painel de controle.
+  - Criação e edição de provas.
+  - Gerenciamento de turmas e alunos.
+  - Visualização de logs de segurança e relatórios de fraude.
+
+## Configuração e Execução
+
+1. Instale as dependências do Node.js:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O frontend estará acessível em `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Estrutura de Pastas
 
-## Learn More
+- `src/app/`: Contém as páginas e layouts da aplicação Next.js.
+- `src/components/`: Componentes React reutilizáveis.
+- `src/utils/`: Funções utilitárias, incluindo a lógica de `securityMonitor.ts`.
+- `public/`: Arquivos estáticos.
 
-To learn more about Next.js, take a look at the following resources:
+## Saiba Mais
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Para aprender mais sobre Next.js, React e TypeScript, consulte a documentação oficial:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [React Documentation](https://react.dev/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)

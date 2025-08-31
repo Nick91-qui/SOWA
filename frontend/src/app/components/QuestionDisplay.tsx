@@ -2,6 +2,17 @@
 
 import React from 'react';
 
+/**
+ * @interface QuestionDisplayProps
+ * @description Propriedades para o componente QuestionDisplay.
+ * @property {object} question - O objeto da questão a ser exibida.
+ * @property {string} question.id - O ID da questão.
+ * @property {string} question.text - O texto da questão.
+ * @property {string[]} question.options - As opções de resposta para a questão (se aplicável).
+ * @property {'single_choice' | 'multiple_choice' | 'multiple_selection' | 'text_input'} question.type - O tipo da questão.
+ * @property {(questionId: string, answer: string | string[]) => void} onAnswerChange - Função de callback para lidar com a mudança da resposta.
+ * @property {string | string[]} currentAnswer - A resposta atual para a questão.
+ */
 interface QuestionDisplayProps {
   question: {
     id: string;
@@ -13,11 +24,29 @@ interface QuestionDisplayProps {
   currentAnswer: string | string[];
 }
 
+/**
+ * @component QuestionDisplay
+ * @description Componente React para exibir uma questão de exame e permitir que o usuário selecione ou insira uma resposta.
+ * Renderiza diferentes tipos de entrada com base no tipo da questão (múltipla escolha, única escolha, texto).
+ * @param {QuestionDisplayProps} props - As propriedades do componente.
+ * @returns {JSX.Element} O componente de exibição da questão.
+ */
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({ question, onAnswerChange, currentAnswer }) => {
+  /**
+   * @function handleSingleChoiceChange
+   * @description Lida com a mudança de seleção para questões de escolha única.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança do input.
+   */
   const handleSingleChoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onAnswerChange(question.id, e.target.value);
   };
 
+  /**
+   * @function handleMultipleChoiceChange
+   * @description Lida com a mudança de seleção para questões de múltipla escolha/seleção.
+   * Adiciona ou remove a opção selecionada da lista de respostas.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança do input.
+   */
   const handleMultipleChoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     let newAnswer = Array.isArray(currentAnswer) ? [...currentAnswer] : [];
@@ -30,6 +59,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({ question, onAnswerCha
     onAnswerChange(question.id, newAnswer);
   };
 
+  /**
+   * @function handleTextInputChange
+   * @description Lida com a mudança de texto para questões de entrada de texto.
+   * @param {React.ChangeEvent<HTMLTextAreaElement>} e - O evento de mudança da textarea.
+   */
   const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onAnswerChange(question.id, e.target.value);
   };

@@ -5,6 +5,14 @@
 import React, { useEffect, useState } from 'react';
 import ExamResults from '../components/ExamResults';
 
+/**
+ * @component ResultsPage
+ * @description Página de exibição dos resultados de um exame. Atualmente, utiliza dados mockados
+ * para simular a pontuação, o número total de questões e o feedback. Em uma implementação futura,
+ * buscará esses dados do backend.
+ *
+ * @returns {JSX.Element} O componente da página de resultados.
+ */
 const ResultsPage = () => {
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);

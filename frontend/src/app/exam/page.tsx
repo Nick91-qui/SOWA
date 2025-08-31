@@ -19,6 +19,15 @@ import ExamError from '@/app/components/exam/ExamError';
 import ExamFinished from '@/app/components/exam/ExamFinished';
 
 
+/**
+ * @component ExamPage
+ * @description Página principal do exame, responsável por orquestrar a exibição das questões,
+ * gerenciamento do tempo, navegação entre questões, submissão de respostas e monitoramento de segurança.
+ * Utiliza diversos hooks personalizados para gerenciar o estado da sessão do exame, respostas, submissão
+ * e navegação.
+ *
+ * @returns {JSX.Element} O componente da página do exame.
+ */
 const ExamPage = () => {
     const router = useRouter();
     const { questions, examSession, isLoading, error, setExamSession } = useExamSession();
@@ -30,15 +39,28 @@ const ExamPage = () => {
 
 
 
-    const handleSubmitClick = () => {
+    /**
+   * @function handleSubmitClick
+   * @description Abre o modal de confirmação para finalizar o exame.
+   */
+  const handleSubmitClick = () => {
     setShowConfirmModal(true);
   };
 
+  /**
+   * @function handleConfirmSubmit
+   * @description Fecha o modal de confirmação e inicia o processo de submissão do exame.
+   */
   const handleConfirmSubmit = () => {
     setShowConfirmModal(false);
     confirmSubmit(answers);
   };
 
+  /**
+   * @function handleTimeUp
+   * @description Lida com o evento de tempo esgotado para o exame, registrando as respostas
+   * e iniciando o processo de submissão.
+   */
   const handleTimeUp = async () => {
     console.log('Tempo esgotado! Respostas:', answers);
     await confirmSubmit(answers);

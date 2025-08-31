@@ -4,6 +4,11 @@
 
 import React, { useState } from 'react';
 
+/**
+ * @component RegisterForm
+ * @description Componente de formulário de registro para novos usuários.
+ * Gerencia o estado dos campos de e-mail, senha e confirmação de senha, exibe mensagens de erro e sucesso, e lida com o envio do formulário.
+ */
 const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,6 +16,13 @@ const RegisterForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  /**
+   * @function handleSubmit
+   * @description Lida com o envio do formulário de registro.
+   * Realiza validações de entrada (e-mail, comprimento da senha, senhas coincidentes), envia os dados para a API de registro.
+   * Exibe mensagens de erro ou sucesso com base na resposta da API.
+   * @param {React.FormEvent} e - O evento de formulário.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

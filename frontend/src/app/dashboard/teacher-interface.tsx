@@ -4,12 +4,23 @@ import React, { useEffect, useState } from 'react';
 import { ExamSession } from '@/types';
 import { getExamSessions } from '../api/examService'; // Precisaremos criar esta função
 
+/**
+ * @component TeacherInterface
+ * @description Componente da interface do professor para gerenciar sessões de prova.
+ * Exibe uma lista de sessões de prova, seus status e pontuações.
+ * @returns {JSX.Element} O componente da interface do professor.
+ */
 const TeacherInterface = () => {
   const [examSessions, setExamSessions] = useState<ExamSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+  /**
+   * @function fetchExamSessions
+   * @description Busca as sessões de exame disponíveis na API e atualiza o estado do componente.
+   * Lida com estados de carregamento e erro.
+   */
     const fetchExamSessions = async () => {
       setLoading(true);
       setError(null);

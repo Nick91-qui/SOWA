@@ -2,12 +2,25 @@
 
 import React from 'react';
 
+/**
+ * @interface ExamResultsProps
+ * @description Propriedades para o componente ExamResults.
+ * @property {number} score - A pontuação obtida no exame.
+ * @property {number} totalQuestions - O número total de questões no exame.
+ * @property {string} [feedback] - Um feedback opcional sobre o desempenho no exame.
+ */
 interface ExamResultsProps {
   score: number;
   totalQuestions: number;
   feedback?: string;
 }
 
+/**
+ * @component ExamResults
+ * @description Componente React que exibe os resultados de um exame, incluindo pontuação, percentual e feedback.
+ * @param {ExamResultsProps} props - As propriedades do componente.
+ * @returns {JSX.Element} O componente de resultados do exame.
+ */
 const ExamResults: React.FC<ExamResultsProps> = ({ score, totalQuestions, feedback }) => {
   const percentage = (score / totalQuestions) * 100;
 

@@ -1,5 +1,15 @@
 import React from 'react';
 
+/**
+ * @interface ExamNavigationProps
+ * @description Propriedades para o componente ExamNavigation.
+ * @property {number} currentQuestionIndex - O índice da pergunta atual no exame.
+ * @property {number} totalQuestions - O número total de perguntas no exame.
+ * @property {boolean} isSubmitting - Indica se o exame está sendo submetido.
+ * @property {() => void} handlePreviousQuestion - Função para navegar para a pergunta anterior.
+ * @property {() => void} handleNextQuestion - Função para navegar para a próxima pergunta.
+ * @property {() => void} handleSubmitClick - Função para lidar com o clique no botão de finalizar exame.
+ */
 interface ExamNavigationProps {
   currentQuestionIndex: number;
   totalQuestions: number;
@@ -9,6 +19,11 @@ interface ExamNavigationProps {
   handleSubmitClick: () => void;
 }
 
+/**
+ * @component ExamNavigation
+ * @description Componente de navegação para o exame, permitindo ao usuário avançar, retroceder entre as perguntas e finalizar o exame.
+ * @param {ExamNavigationProps} props - As propriedades para o componente.
+ */
 const ExamNavigation: React.FC<ExamNavigationProps> = ({
   currentQuestionIndex,
   totalQuestions,

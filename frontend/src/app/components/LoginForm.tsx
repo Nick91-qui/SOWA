@@ -5,12 +5,24 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+/**
+ * @component LoginForm
+ * @description Componente de formulário de login para autenticação de usuários.
+ * Gerencia o estado dos campos de e-mail e senha, exibe mensagens de erro e lida com o envio do formulário.
+ */
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
+  /**
+   * @function handleSubmit
+   * @description Lida com o envio do formulário de login.
+   * Realiza validações de entrada, envia as credenciais para a API de login e redireciona o usuário em caso de sucesso.
+   * Exibe mensagens de erro em caso de falha na validação ou na autenticação.
+   * @param {React.FormEvent} e - O evento de formulário.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

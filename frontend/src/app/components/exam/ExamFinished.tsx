@@ -1,11 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
 
+/**
+ * @interface ExamFinishedProps
+ * @description Propriedades para o componente ExamFinished.
+ * @property {boolean} isSubmitting - Indica se as respostas do exame estão sendo enviadas.
+ * @property {string | null} submitError - Mensagem de erro se o envio falhar, ou null se não houver erro.
+ */
 interface ExamFinishedProps {
   isSubmitting: boolean;
   submitError: string | null;
 }
 
+/**
+ * @component ExamFinished
+ * @description Componente exibido quando o exame é finalizado.
+ * Ele mostra diferentes estados: enviando respostas, erro no envio ou sucesso no envio, com links para o dashboard ou resultados.
+ * @param {ExamFinishedProps} props - As propriedades do componente.
+ */
 const ExamFinished: React.FC<ExamFinishedProps> = ({ isSubmitting, submitError }) => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-100">

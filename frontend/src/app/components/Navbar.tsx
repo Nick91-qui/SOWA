@@ -1,5 +1,11 @@
 import Link from 'next/link';
 
+/**
+ * @component Navbar
+ * @description Componente de barra de navegação para o aplicativo.
+ * Exibe links para as páginas de Login, Registro e Dashboard.
+ * @returns {JSX.Element} O componente da barra de navegação.
+ */
 export default function Navbar() {
   return (
     <nav className="bg-gray-800 p-4 fixed w-full z-10 top-0">

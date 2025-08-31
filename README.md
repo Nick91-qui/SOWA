@@ -1,151 +1,58 @@
 # SOWA - Secure Online Web Assessment
 
-This project is a Secure Online Web Assessment (SOWA) application designed to provide a robust and reliable platform for conducting online examinations. It features a FastAPI backend for API services and a Next.js frontend for the user interface, with integrated security monitoring and deployment configurations.
+Este documento fornece uma visão geral do projeto SOWA, um sistema de avaliação online seguro, desenvolvido para gerenciar exames e monitorar a integridade dos alunos durante as provas. O sistema é dividido em duas partes principais: um backend robusto em FastAPI e um frontend interativo em Next.js.
 
-## Project Structure
+## 1. Visão Geral do Projeto
 
-```
-. (root)
-├── backend/             # FastAPI backend application
-│   ├── app/             # Main application source code
-│   │   ├── api/         # API endpoints (login, users, fraud)
-│   │   ├── core/        # Core configurations (settings, security, database)
-│   │   ├── models/      # SQLAlchemy database models (user, fraud_log)
-│   │   ├── schemas/     # Pydantic schemas for data validation and serialization
-│   │   ├── services/    # Business logic and service functions
-│   │   ├── database.py  # Database connection and session management
-│   │   ├── initial_data.py # Script to initialize admin user
-│   │   └── main.py      # FastAPI application entry point
-│   ├── tests/           # Backend tests
-│   ├── poetry.lock      # Poetry lock file
-│   ├── pyproject.toml   # Poetry project configuration and dependencies
-│   ├── README.md        # Backend specific README
-│   └── render.yaml      # Render deployment configuration
-├── frontend/            # Next.js frontend application
-│   ├── public/          # Static assets
-│   ├── src/             # Frontend source code
-│   │   ├── app/         # Next.js App Router (layout, pages)
-│   │   └── utils/       # Utility functions (securityMonitor)
-│   ├── vercel.json      # Vercel deployment configuration
-│   ├── package.json     # Node.js project configuration and dependencies
-│   ├── package-lock.json # Node.js dependency lock file
-│   ├── next.config.ts   # Next.js configuration
-│   ├── tsconfig.json    # TypeScript configuration
-│   └── README.md        # Frontend specific README
-├── docs/                # Documentation files
-└── README.md            # Main project README (this file)
-```
+O SOWA é uma plataforma abrangente para a criação, aplicação e avaliação de exames online, com foco em segurança e prevenção de fraudes. Ele permite que professores criem e gerenciem provas, enquanto alunos podem realizar exames e visualizar seus resultados. O sistema também inclui funcionalidades de monitoramento para detectar comportamentos suspeitos durante as avaliações.
 
-## Technologies Used
+## 2. Funcionalidades Principais
 
-**Backend:**
-- FastAPI: High-performance web framework for building APIs.
-- SQLAlchemy: SQL toolkit and Object-Relational Mapper (ORM).
-- PostgreSQL: Relational database.
-- Pydantic: Data validation and settings management.
-- Python-jose: JWT (JSON Web Token) implementation.
-- Passlib: Password hashing library.
-- Poetry: Dependency management and packaging.
+### 2.1. Cadastro de Usuários
 
-**Frontend:**
-- Next.js: React framework for building web applications.
-- React: JavaScript library for building user interfaces.
-- TypeScript: Superset of JavaScript that adds static typing.
-- Tailwind CSS: Utility-first CSS framework.
+O sistema permite o cadastro de dois tipos de usuários:
 
-## Features
+*   **Alunos:** Podem se registrar para acessar as provas.
+*   **Professores:** Podem ser cadastrados para gerenciar provas e turmas.
 
-**Backend:**
-- User authentication with JWT.
-- Secure password hashing.
-- Fraud detection logging (fullscreen changes, Alt+Tab, right-click, key combinations).
-- RESTful API endpoints for user management and fraud logging.
+### 2.2. Funcionalidades para Alunos
 
-**Frontend:**
-- Basic Next.js application structure.
-- Client-side security monitoring (fullscreen, visibility, right-click, keydown).
+Após o login, os alunos podem:
 
-## Setup and Installation
+*   **Logar no Sistema:** Acessar sua conta com credenciais.
+*   **Escolher Provas a Fazer:** Visualizar uma lista de provas disponíveis e selecionar qual deseja realizar.
+*   **Fazer Provas:** Realizar os exames online, com monitoramento de segurança ativo.
+*   **Ver Notas da Prova após Correção:** Acessar os resultados e pontuações de suas provas após a avaliação pelo professor.
 
-### Prerequisites
+### 2.3. Funcionalidades para Professores
 
-- Python 3.9+
-- Node.js 18+
-- PostgreSQL database
-- Poetry (for Python dependency management): `pip install poetry`
+Após o login, os professores podem:
 
-### Backend Setup
+*   **Criar Turmas:** Organizar alunos em turmas para facilitar a atribuição de provas.
+*   **Criar Provas:** Elaborar novos exames, definindo questões, tempo limite e outras configurações.
+*   **Avaliar Provas Feitas pelos Alunos:** Acessar as provas submetidas pelos alunos para correção e atribuição de notas.
+*   **Receber Logs de Tentativa de Evadir o Sistema da Prova (Cola):** Visualizar relatórios de segurança que indicam comportamentos suspeitos detectados durante as provas dos alunos (ex: saída de tela cheia, troca de abas, uso de atalhos de teclado).
 
-1.  **Navigate to the backend directory:**
-    ```bash
-    cd backend
-    ```
+## 3. Arquitetura do Sistema
 
-2.  **Install Python dependencies using Poetry:**
-    ```bash
-    poetry install
-    ```
+O SOWA é construído com uma arquitetura de microsserviços, separando o frontend e o backend para maior escalabilidade e manutenção:
 
-3.  **Configure environment variables:**
-    Create a `.env` file in the `backend` directory with your database URL and a secret key. Example:
-    ```
-    DATABASE_URL="postgresql://user:password@host:port/database_name"
-    SECRET_KEY="your_super_secret_key_for_jwt"
-    ACCESS_TOKEN_EXPIRE_MINUTES="30"
-    ```
+*   **Backend (FastAPI):** Desenvolvido em Python, utilizando o framework FastAPI para a criação de APIs RESTful. Gerencia a lógica de negócio, autenticação de usuários, armazenamento de dados (PostgreSQL) e o registro de eventos de fraude.
+*   **Frontend (Next.js):** Desenvolvido em TypeScript com Next.js e React, oferece uma interface de usuário responsiva e intuitiva. Interage com o backend através de chamadas de API e implementa o monitoramento de segurança no lado do cliente.
 
-4.  **Run database migrations (if any) and initialize data:**
-    (Note: This project currently uses SQLAlchemy models directly. For production, consider using Alembic for migrations.)
-    You can run the `initial_data.py` script to create tables and an initial admin user:
-    ```bash
-    poetry run python -m app.initial_data
-    ```
+## 4. Tecnologias Utilizadas
 
-5.  **Run the FastAPI application:**
-    ```bash
-    poetry run uvicorn app.main:app --reload
-    ```
-    The backend will be accessible at `http://127.0.0.1:8000`.
+*   **Backend:** FastAPI, SQLAlchemy, PostgreSQL, Pydantic, Python-jose, Passlib, Poetry.
+*   **Frontend:** Next.js, React, TypeScript, Tailwind CSS.
 
-### Frontend Setup
+## 5. Configuração e Execução (Visão Geral)
 
-1.  **Navigate to the frontend directory:**
-    ```bash
-    cd frontend
-    ```
+Para configurar e executar o projeto, é necessário configurar tanto o ambiente do backend quanto o do frontend. Ambos possuem seus próprios `README.md`s detalhados para instruções de instalação e execução.
 
-2.  **Install Node.js dependencies:**
-    ```bash
-    npm install
-    ```
+## 6. Segurança
 
-3.  **Run the Next.js development server:**
-    ```bash
-    npm run dev
-    ```
-    The frontend will be accessible at `http://localhost:3000`.
+O sistema incorpora funcionalidades de segurança como autenticação JWT, hashing de senhas e monitoramento de atividades do usuário durante as provas para detectar e registrar tentativas de fraude.
 
-## Deployment
+---
 
-### Frontend (Vercel)
-
-This project includes a `vercel.json` file in the `frontend` directory for easy deployment to Vercel. You can deploy directly from your Git repository connected to Vercel.
-
-### Backend (Render)
-
-This project includes a `render.yaml` file in the `backend` directory for deployment to Render. You can connect your Git repository to Render and use this blueprint for deployment. Remember to configure your database connection string and secret key in Render's environment variables.
-
-## Security Considerations
-
-- **JWT Security:** Ensure your `SECRET_KEY` is strong and kept confidential. Rotate it regularly.
-- **Password Hashing:** Passwords are hashed using `bcrypt` via `passlib`.
-- **Frontend Monitoring:** The `securityMonitor.ts` utility attempts to detect common cheating behaviors like exiting fullscreen, switching tabs, or using developer tools. Further actions (e.g., logging to backend, invalidating session) can be implemented based on these detections.
-- **CORS:** FastAPI is configured with CORS settings. Adjust `settings.BACKEND_CORS_ORIGINS` as needed for your production environment.
-
-## Contributing
-
-(Add contributing guidelines here if applicable)
-
-## License
-
-(Add license information here if applicable)
+Para informações mais detalhadas sobre a configuração e execução de cada parte do projeto, consulte os `README.md`s específicos nas pastas `backend/` e `frontend/`.

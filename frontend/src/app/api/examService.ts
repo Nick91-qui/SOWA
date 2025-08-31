@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * @file examService.ts
+ * @description Este módulo fornece funções para interagir com a API de exames e sessões de exame.
+ * Ele lida com a busca de exames disponíveis, início de sessões de exame, submissão de respostas,
+ * obtenção de detalhes da sessão e finalização da sessão.
+ */
+
 import { Exam, Question, ExamSession, ExamResponse } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -9,6 +16,10 @@ interface ApiResponse<T> {
   error?: string;
 }
 
+/**
+ * Busca todos os exames disponíveis na API.
+ * @returns Uma Promise que resolve para um objeto ApiResponse contendo uma lista de exames ou um erro.
+ */
 export const getAvailableExams = async (): Promise<ApiResponse<Exam[]>> => {
   try {
     const response = await fetch(`${API_URL}/exams`, {
@@ -30,6 +41,11 @@ export const getAvailableExams = async (): Promise<ApiResponse<Exam[]>> => {
   }
 };
 
+/**
+ * Inicia uma nova sessão de exame para um dado ID de exame.
+ * @param examId O ID do exame para o qual iniciar a sessão.
+ * @returns Uma Promise que resolve para um objeto ApiResponse contendo a sessão de exame criada ou um erro.
+ */
 export const startExamSession = async (examId: string): Promise<ApiResponse<ExamSession>> => {
   try {
     const response = await fetch(`${API_URL}/exam-sessions`, {
@@ -52,6 +68,13 @@ export const startExamSession = async (examId: string): Promise<ApiResponse<Exam
   }
 };
 
+/**
+ * Envia a resposta de uma questão para uma sessão de exame específica.
+ * @param sessionId O ID da sessão de exame.
+ * @param questionId O ID da questão.
+ * @param answer A resposta do usuário para a questão.
+ * @returns Uma Promise que resolve para um objeto ApiResponse contendo a resposta do exame criada ou um erro.
+ */
 export const submitExamResponse = async (
   sessionId: string,
   questionId: string,
@@ -82,6 +105,11 @@ export const submitExamResponse = async (
   }
 };
 
+/**
+ * Finaliza uma sessão de exame específica.
+ * @param sessionId O ID da sessão de exame a ser finalizada.
+ * @returns Uma Promise que resolve para um objeto ApiResponse contendo a sessão de exame finalizada ou um erro.
+ */
 export const endExamSession = async (sessionId: string): Promise<ApiResponse<ExamSession>> => {
   try {
     const response = await fetch(`${API_URL}/exam-sessions/${sessionId}/end`, {
@@ -103,6 +131,10 @@ export const endExamSession = async (sessionId: string): Promise<ApiResponse<Exa
   }
 };
 
+/**
+ * Busca todas as sessões de exame do usuário atual.
+ * @returns Uma Promise que resolve para um objeto ApiResponse contendo uma lista de sessões de exame ou um erro.
+ */
 export const getExamSessions = async (): Promise<ApiResponse<ExamSession[]>> => {
   try {
     const response = await fetch(`${API_URL}/exam-sessions`, {
