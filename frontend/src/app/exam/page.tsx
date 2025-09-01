@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { setupSecurityMonitoring } from '../../../utils/securityMonitor';
+import LockdownExam from './lockdown-exam';
 import { endExamSession } from '../api/examService';
 import { ExamResponse } from '@/types';
 import QuestionDisplay from '../components/QuestionDisplay';
@@ -77,9 +77,7 @@ const ExamPage = () => {
     }
   }, [examFinished, examSession, router]);
 
-  useEffect(() => {
-    setupSecurityMonitoring();
-  }, []);
+
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -175,6 +173,7 @@ const ExamPage = () => {
         </div>
       </div>
     )}
+    </LockdownExam>
     </>
   );
 };

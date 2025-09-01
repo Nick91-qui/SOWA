@@ -1,10 +1,12 @@
 // 'use client';
 import type { Metadata } from "next";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 import { Geist, Geist_Mono } from "next/font/google";
  import "./globals.css";
- import SecurityMonitor from './components/SecurityMonitor';
+
  import Navbar from './components/Navbar';
 
 const geistSans = Geist({
@@ -50,7 +52,8 @@ export default function RootLayout({
          <div className="pt-16">
            {children}
          </div>
-         <SecurityMonitor />
+
+         <ToastContainer />
        </body>
      </html>
    );
