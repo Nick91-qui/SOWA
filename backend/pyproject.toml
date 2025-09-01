@@ -3,7 +3,10 @@ name = "backend"
 version = "0.1.0"
 description = "FastAPI backend for Online Exam Platform"
 authors = ["Your Name <you@example.com>"]
-package-mode = false
+package-mode = true
+
+[tool.poetry.packages]
+packages = [{ include = "app", from = "." }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -11,7 +14,7 @@ python-dotenv = "^1.0.0"
 fastapi = "^0.104.1"
 uvicorn = {extras = ["standard"], version = "^0.23.2"}
 sqlalchemy = "^2.0.23"
-psycopg2-binary = "^2.9.9"
+
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pydantic-settings = "^2.1.0"
