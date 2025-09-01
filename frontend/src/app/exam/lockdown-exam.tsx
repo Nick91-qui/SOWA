@@ -24,7 +24,7 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
     },
     onError: (error) => {
       console.error('Erro ao reportar fraude:', error);
-      toast.error('Erro ao registrar violação.');
+      toast.error('Não foi possível registrar a violação. Tente novamente.');
     },
   });
 
@@ -35,7 +35,7 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
       const fraudDetails = 'Saiu do modo tela cheia.';
       reportFraud.mutate({ sessionId, type: 'FULLSCREEN_EXIT', details: fraudDetails });
       setViolationCount(prev => prev + 1);
-      toast.warn(`Comportamento suspeito detectado: ${fraudDetails} (${violationCount + 1}/${MAX_VIOLATIONS})`);
+      toast.warn(`Atenção: Você ${fraudDetails} (${violationCount + 1} de ${MAX_VIOLATIONS} violações).`);
     }
   }, [sessionId, violationCount, reportFraud]);
 
@@ -44,7 +44,7 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
       const fraudDetails = 'Mudou de aba/janela.';
       reportFraud.mutate({ sessionId, type: 'TAB_CHANGE', details: fraudDetails });
       setViolationCount(prev => prev + 1);
-      toast.warn(`Comportamento suspeito detectado: ${fraudDetails} (${violationCount + 1}/${MAX_VIOLATIONS})`);
+      toast.warn(`Atenção: Você ${fraudDetails} (${violationCount + 1} de ${MAX_VIOLATIONS} violações).`);
     }
   }, [sessionId, violationCount, reportFraud]);
 
@@ -53,7 +53,7 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen().catch(err => {
         console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`);
-        toast.error('Não foi possível entrar em modo tela cheia. Por favor, permita o modo tela cheia para continuar a prova.');
+        toast.error('Falha ao entrar em tela cheia. Por favor, ative o modo tela cheia para iniciar a prova.');
       });
     }
 
@@ -73,18 +73,18 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
   useEffect(() => {
     if (violationCount >= MAX_VIOLATIONS) {
       // Encerrar a prova ou tomar outra ação drástica
-      toast.error('Muitas violações detectadas. A prova será encerrada.');
+      toast.error('Limite de violações atingido. A prova será encerrada automaticamente.');
       // Aqui você pode adicionar a lógica para submeter a prova automaticamente
       // ou redirecionar o usuário para uma página de encerramento.
       // Submeter a prova automaticamente
       axios.post(`/api/exam-sessions/${sessionId}/auto-submit/`)
         .then(() => {
-          toast.success('Prova encerrada automaticamente devido a violações.');
+          toast.success('Prova encerrada com sucesso devido a violações.');
           router.push(`/exam-finished/${sessionId}`);
         })
         .catch(error => {
           console.error('Erro ao submeter prova automaticamente:', error);
-          toast.error('Erro ao encerrar a prova automaticamente.');
+          toast.error('Ocorreu um erro ao tentar encerrar a prova automaticamente.');
           router.push(`/exam-finished/${sessionId}`); // Redireciona mesmo com erro para evitar loop
         });
     }
@@ -94,7 +94,7 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
     <>
       {!isFullScreen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <p className="text-white text-xl text-center">Por favor, entre no modo tela cheia para continuar a prova.</p>
+          <p className="text-white text-xl text-center">Por favor, entre no modo tela cheia para iniciar a prova.</p>
         </div>
       )}
       {children}
