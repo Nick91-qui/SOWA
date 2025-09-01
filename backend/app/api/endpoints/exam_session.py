@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 """Módulo para gerenciar as sessões de exames na API.
 
 Este módulo define as rotas da API para operações relacionadas a sessões de exames,
@@ -15,6 +16,7 @@ from app.models.user import User
 from app.schemas.exam_session import ExamSession, ExamSessionCreate, ExamSessionUpdate, ExamResponse, ExamResponseCreate
 from app.services import exam_session as exam_session_service
 from app.services import exam as exam_service
+from app.services.score_calculator import calculate_exam_score
 
 # Cria uma instância do APIRouter para definir as rotas da API.
 router = APIRouter()
@@ -197,8 +199,16 @@ def submit_exam_session(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exam session not found or you don't have permission")
     if db_session.status != "in_progress":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Exam session is not in progress")
-    
-    return exam_session_service.end_exam_session(db=db, session_id=session_id)
+
+    updated_session = exam_session_service.update_exam_session(
+        db=db,
+        session_id=session_id,
+        session_update=ExamSessionUpdate(status="submitted", end_time=datetime.now())
+    )
+
+    calculate_exam_score(db, updated_session)
+
+    return updated_session
 
 @router.post("/exam-sessions/{session_id}/grade/", response_model=ExamSession)
 def grade_exam_session_api(

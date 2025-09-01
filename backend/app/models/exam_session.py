@@ -37,6 +37,7 @@ class ExamSession(Base):
     end_time = Column(DateTime(timezone=True), nullable=True)
     is_active = Column(Boolean, default=True)
     status = Column(String, default="in_progress")  # in_progress, submitted, graded
+    score = Column(Float, nullable=True) # Pontuação final da sessão de exame
     
     # Relacionamento com o exame associado a esta sessão.
     exam = relationship("Exam", backref="sessions")

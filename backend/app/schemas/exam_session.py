@@ -53,6 +53,7 @@ class ExamSession(ExamSessionBase):
     end_time: Optional[datetime] = None
     is_active: bool
     status: str
+    score: Optional[float] = None
     responses: List[ExamResponse] = []
 
     class Config:
