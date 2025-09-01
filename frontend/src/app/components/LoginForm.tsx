@@ -73,7 +73,7 @@ const LoginForm = () => {
       router.push('/dashboard');
 
     } catch (err: any) {
-      setError('Ocorreu um erro inesperado. Por favor, tente novamente.');
+      setError(`Ocorreu um erro inesperado: ${err.message || err}. Por favor, tente novamente.`);
       console.error('Login error:', err);
     }
   };

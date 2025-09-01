@@ -6,6 +6,7 @@ utilizando SQLAlchemy ORM para mapeamento de objetos-relacional.
 """
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.types import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

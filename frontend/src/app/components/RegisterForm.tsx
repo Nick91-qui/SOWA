@@ -15,6 +15,7 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [userType, setUserType] = useState('student'); // Default to student
 
   /**
    * @function handleSubmit
@@ -59,7 +60,7 @@ const RegisterForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, user_type: userType }),
       });
 
       if (!response.ok) {
@@ -124,6 +125,19 @@ const RegisterForm = () => {
           required
           autoComplete="new-password"
         />
+      </div>
+      <div className="mb-6">
+        <label htmlFor="userType" className="block text-gray-700 text-sm font-bold mb-2">Tipo de Usuário:</label>
+        <select
+          id="userType"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          value={userType}
+          onChange={(e) => setUserType(e.target.value)}
+          required
+        >
+          <option value="student">Aluno</option>
+          <option value="teacher">Professor</option>
+        </select>
       </div>
       <div className="flex items-center justify-between">
         <button

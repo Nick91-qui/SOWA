@@ -22,7 +22,7 @@ router = APIRouter()
 def create_exam(
     exam: ExamCreate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Any:
     """Cria um novo exame.
 
@@ -41,7 +41,7 @@ def read_exams(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> List[Exam]:
     """Retorna uma lista de exames.
 
@@ -61,7 +61,7 @@ def read_exams(
 def read_exam(
     exam_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Exam:
     """Retorna um exame específico pelo ID.
 
@@ -86,7 +86,7 @@ def update_exam(
     exam_id: int,
     exam: ExamUpdate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Exam:
     """Atualiza um exame existente.
 
@@ -111,7 +111,7 @@ def update_exam(
 def delete_exam(
     exam_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Exam:
     """Exclui um exame existente.
 
@@ -136,7 +136,7 @@ def create_question_for_exam(
     exam_id: int,
     question: QuestionCreate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Question:
     """Cria uma nova questão para um exame específico.
 
@@ -163,7 +163,7 @@ def read_questions_for_exam(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> List[Question]:
     """Retorna uma lista de questões para um exame específico.
 
@@ -190,7 +190,7 @@ def read_questions_for_exam(
 def read_question(
     question_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Question:
     """Retorna uma questão específica pelo ID.
 
@@ -218,7 +218,7 @@ def update_question(
     question_id: int,
     question: QuestionUpdate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Question:
     """Atualiza uma questão existente.
 
@@ -246,7 +246,7 @@ def update_question(
 def delete_question(
     question_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Question:
     """Exclui uma questão existente.
 

@@ -41,7 +41,8 @@ export const useExamSession = () => {
         setExamSession(session);
       } catch (err: any) {
         console.error('Erro ao carregar exame:', err);
-        setError(err.message || 'Erro ao carregar exame.');
+        const errorMessage = typeof err === 'object' && err !== null && 'message' in err ? err.message : String(err);
+        setError(errorMessage || 'Erro ao carregar exame.');
       } finally {
         setIsLoading(false);
       }

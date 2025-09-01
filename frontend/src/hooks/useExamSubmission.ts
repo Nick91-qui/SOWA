@@ -39,8 +39,9 @@ export const useExamSubmission = (examSession: ExamSession | null, setExamFinish
       router.push(`/exam/result/${examSession.id}`);
       console.log('Exame submetido com sucesso!');
     } catch (err: any) {
-      console.error('Erro na submissão do exame:', err.message);
-      setError(err.message || 'Erro ao submeter o exame.');
+      console.error('Erro na submissão do exame:', err);
+      const errorMessage = typeof err === 'object' && err !== null && 'message' in err ? err.message : String(err);
+      setError(errorMessage || 'Erro ao submeter o exame.');
       setExamFinished(false);
     } finally {
       setIsSubmitting(false);

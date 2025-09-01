@@ -44,8 +44,7 @@ const ExamPage = () => {
    * @description Abre o modal de confirmação para finalizar o exame.
    */
   const handleSubmitClick = () => {
-    setShowConfirmModal(true);
-  };
+    setShowConfirmModal(true);};
 
   /**
    * @function handleConfirmSubmit
@@ -117,7 +116,7 @@ const ExamPage = () => {
   }
 
   return (
-    <>
+    <LockdownExam sessionId={Number(examSession?.id ?? 0)}>
       <ExamContainer>
       <ExamHeader
         examTitle="Exame SOWA"
@@ -174,7 +173,6 @@ const ExamPage = () => {
       </div>
     )}
     </LockdownExam>
-    </>
   );
 };
 

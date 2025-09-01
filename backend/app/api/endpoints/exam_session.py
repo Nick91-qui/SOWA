@@ -25,7 +25,7 @@ router = APIRouter()
 def create_exam_session(
     exam_session: ExamSessionCreate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Cria uma nova sessão de exame para o usuário atual.
 
@@ -63,7 +63,7 @@ def read_my_exam_sessions(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Retorna todas as sessões de exame do usuário atual.
 
@@ -83,7 +83,7 @@ def read_my_exam_sessions(
 def read_exam_session(
     session_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Retorna uma sessão de exame específica pelo ID.
 
@@ -110,7 +110,7 @@ def update_exam_session(
     session_id: int,
     session_update: ExamSessionUpdate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Atualiza uma sessão de exame existente.
 
@@ -138,7 +138,7 @@ def create_exam_response(
     session_id: int,
     response: ExamResponseCreate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Cria uma nova resposta para uma questão dentro de uma sessão de exame.
 
@@ -235,7 +235,7 @@ def auto_submit_exam_session(
 def submit_exam_session(
     session_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Submete uma sessão de exame, marcando-a como concluída.
 
@@ -273,7 +273,7 @@ def submit_exam_session(
 def grade_exam_session_api(
     session_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_user),
 ):
     """Avalia uma sessão de exame.
 

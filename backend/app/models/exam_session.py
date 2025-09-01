@@ -5,7 +5,7 @@ Este módulo contém as definições das tabelas `exam_sessions` e `exam_respons
 utilizando SQLAlchemy ORM para mapeamento de objetos-relacional.
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
