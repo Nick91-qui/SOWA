@@ -76,7 +76,17 @@ const LockdownExam: React.FC<LockdownExamProps> = ({ children, sessionId }) => {
       toast.error('Muitas violações detectadas. A prova será encerrada.');
       // Aqui você pode adicionar a lógica para submeter a prova automaticamente
       // ou redirecionar o usuário para uma página de encerramento.
-      router.push(`/exam-finished/${sessionId}`); // Exemplo de redirecionamento
+      // Submeter a prova automaticamente
+      axios.post(`/api/exam-sessions/${sessionId}/auto-submit/`)
+        .then(() => {
+          toast.success('Prova encerrada automaticamente devido a violações.');
+          router.push(`/exam-finished/${sessionId}`);
+        })
+        .catch(error => {
+          console.error('Erro ao submeter prova automaticamente:', error);
+          toast.error('Erro ao encerrar a prova automaticamente.');
+          router.push(`/exam-finished/${sessionId}`); // Redireciona mesmo com erro para evitar loop
+        });
     }
   }, [violationCount, sessionId, router]);
 

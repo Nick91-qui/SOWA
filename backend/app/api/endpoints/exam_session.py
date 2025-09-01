@@ -163,7 +163,66 @@ def create_exam_response(
     if not db_session or db_session.user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exam session not found or you don't have permission")
     if db_session.status != "in_progress":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot submit responses to a session that is not in progress")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Exam session is not in progress")
+
+    # Atualiza o status da sessão para 'submitted' e define o end_time
+    db_session.status = "submitted"
+    db_session.end_time = datetime.utcnow()
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+
+    # Calcula a pontuação do exame
+    calculated_score = calculate_exam_score(db, session_id=session_id)
+    db_session.score = calculated_score
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+
+    return db_session
+
+@router.post("/exam-sessions/{session_id}/auto-submit/", response_model=ExamSession)
+def auto_submit_exam_session(
+    session_id: int,
+    db: Session = Depends(deps.get_db),
+):
+    """Submete automaticamente uma sessão de exame devido a violações.
+
+    Esta rota não requer autenticação de usuário, mas valida a existência da sessão.
+
+    Args:
+        session_id (int): O ID da sessão de exame a ser submetida.
+        db (Session): A sessão do banco de dados.
+
+    Raises:
+        HTTPException: Se a sessão não for encontrada (404).
+        HTTPException: Se a sessão não estiver em progresso (400).
+
+    Returns:
+        ExamSession: A sessão de exame atualizada após a submissão.
+    """
+    db_session = exam_session_service.get_exam_session(db, session_id=session_id)
+    if not db_session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exam session not found")
+    if db_session.status != "in_progress":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Exam session is not in progress")
+
+    # Atualiza o status da sessão para 'submitted' e define o end_time
+    db_session.status = "submitted"
+    db_session.end_time = datetime.utcnow()
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+
+    # Calcula a pontuação do exame
+    calculated_score = calculate_exam_score(db, session_id=session_id)
+    db_session.score = calculated_score
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+
+    return db_session
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot submit responses to a session that is not in progress")
     
     # Valida se a questão pertence ao exame da sessão.
     question = exam_service.get_question(db, question_id=response.question_id)
