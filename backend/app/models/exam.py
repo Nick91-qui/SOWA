@@ -65,8 +65,9 @@ class Question(Base):
     exam_id = Column(Integer, ForeignKey("exams.id"))
     content = Column(String)
     question_type = Column(String) # Ex: 'multiple_choice', 'essay'
-    options = Column(String, nullable=True) # String JSON para opções de múltipla escolha
-    correct_answer = Column(String, nullable=True) # String JSON ou texto simples
+    options = Column(JSON, nullable=True) # JSON para opções de múltipla escolha
+    correct_answer = Column(JSON, nullable=True) # JSON para resposta correta
+    validation_rules = Column(JSON, nullable=True) # Regras de validação específicas para o tipo de questão
     points = Column(Integer, default=1)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

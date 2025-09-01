@@ -1,6 +1,6 @@
 """Módulo que define os schemas Pydantic para exames e questões."""
 
-from typing import List, Optional
+from typing import List, Optional, Any
 from datetime import datetime
 from pydantic import BaseModel
 
@@ -9,8 +9,9 @@ class QuestionBase(BaseModel):
     """Schema base para uma questão de exame."""
     content: str
     question_type: str
-    options: Optional[str] = None
-    correct_answer: Optional[str] = None
+    options: Optional[Any] = None
+    correct_answer: Optional[Any] = None
+    validation_rules: Optional[Any] = None
     points: int = 1
 
 

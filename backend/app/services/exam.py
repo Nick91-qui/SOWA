@@ -1,10 +1,25 @@
 """Módulo de serviços para operações relacionadas a exames e questões."""
 
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from app.models.exam import Exam, Question
 from app.schemas.exam import ExamCreate, ExamUpdate, QuestionCreate, QuestionUpdate
+from fastapi import HTTPException, status
+
+def validate_question_data(question: QuestionCreate | QuestionUpdate):
+    """Valida os dados da questão com base no seu tipo."""
+    if question.question_type == "multiple_choice":
+        if question.options is not None and (not isinstance(question.options, list) or not all(isinstance(opt, str) for opt in question.options)):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Multiple choice questions must have options as a list of strings.")
+        if question.correct_answer is not None and (not isinstance(question.correct_answer, str) or (question.options is not None and question.correct_answer not in question.options)):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Multiple choice questions must have a correct_answer that is one of the options.")
+    elif question.question_type == "true_false":
+        if question.correct_answer is not None and not isinstance(question.correct_answer, bool):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="True/False questions must have a boolean correct_answer.")
+    # Adicione outras validações para outros tipos de questão aqui
+
+
 
 
 def get_exam(db: Session, exam_id: int):
@@ -119,6 +134,7 @@ def get_questions_by_exam(db: Session, exam_id: int, skip: int = 0, limit: int =
 
 
 def create_question(db: Session, question: QuestionCreate, exam_id: int):
+    validate_question_data(question)
     """Cria uma nova questão para um exame no banco de dados.
 
     Args:
@@ -137,6 +153,7 @@ def create_question(db: Session, question: QuestionCreate, exam_id: int):
 
 
 def update_question(db: Session, question_id: int, question: QuestionUpdate):
+    validate_question_data(question)
     """Atualiza uma questão existente no banco de dados.
 
     Args:
