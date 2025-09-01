@@ -16,7 +16,12 @@ def create_fraud_log(db: Session, fraud_log: FraudLogCreate) -> DBFraudLog:
     Returns:
         DBFraudLog: O objeto FraudLog recém-criado.
     """
-    db_fraud_log = DBFraudLog(**fraud_log.dict())
+    db_fraud_log = DBFraudLog(
+        user_id=fraud_log.user_id,
+        session_id=fraud_log.session_id,
+        event_type=fraud_log.event_type,
+        details=fraud_log.details
+    )
     db.add(db_fraud_log)
     db.commit()
     db.refresh(db_fraud_log)

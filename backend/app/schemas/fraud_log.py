@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 class FraudLogBase(BaseModel):
     """Schema base para um log de fraude."""
-    user_id: int
+    user_id: int | None = None
+    session_id: int
     event_type: str
     details: str | None = None
 
