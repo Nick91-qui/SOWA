@@ -1,31 +1,46 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
-import './style.css'
-import { getRootMessage } from './api.ts'
+import { setupLogin } from './login.ts';
+import { setupRegister } from './register.ts';
+import { setupProfessorDashboard } from './professorDashboard.ts';
+import { setupStudentDashboard } from './studentDashboard.ts';
+import { setupCreateExam } from './createExam.ts';
+import { setupTakeExam } from './takeExam.ts';
+import { setupViewAttempt } from './viewAttempt.ts';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-    <p id="backend-message"></p>
-  </div>
-`
+  <div id="app-content"></div>
+`;
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const appContent = document.querySelector<HTMLDivElement>('#app-content')!;
 
-getRootMessage().then(message => {
-  document.querySelector<HTMLParagraphElement>('#backend-message')!.textContent = message;
-});
+const routes: { [key: string]: (element: HTMLElement) => void } = {
+  '': setupLogin, // Default route
+  '#login': setupLogin,
+  '#register': setupRegister,
+  '#dashboard': (element: HTMLElement) => {
+    const userType = localStorage.getItem('user_type'); // Assuming user_type is stored in localStorage after login
+    if (userType === 'professor') {
+      setupProfessorDashboard(element);
+    } else if (userType === 'aluno') {
+      setupStudentDashboard(element);
+    } else {
+      // Redirect to login if no user type is found or invalid
+      window.location.hash = '#login';
+    }
+  },
+  '#create-exam': setupCreateExam,
+  '#take-exam': setupTakeExam,
+  '#view-attempt': setupViewAttempt,
+  // Add other routes here as you create more components
+};
+
+function router() {
+  const hash = window.location.hash;
+  const setupFunction = routes[hash] || routes[''];
+  setupFunction(appContent);
+}
+
+window.addEventListener('hashchange', router);
+window.addEventListener('load', router);
+
+router();
