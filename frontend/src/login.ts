@@ -1,4 +1,4 @@
-import { loginUser } from './api';
+import { loginUser } from './api.ts';
 
 export function setupLogin(element: HTMLElement) {
   element.innerHTML = `

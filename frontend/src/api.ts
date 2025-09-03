@@ -198,8 +198,6 @@ interface TentativaResponse {
     resposta: string;
     pontuacao_obtida?: number;
     questao: {
-
-
       texto: string;
       resposta_correta?: string;
     };
@@ -220,8 +218,22 @@ export async function getTentativaById(token: string, tentativaId: number): Prom
   }
 }
 
-export function logoutUser(): void {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('user_type');
-  window.location.hash = '#login';
+export async function logoutUser(): Promise<void> {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.warn('No auth token found, cannot log out.');
+      return;
+    }
+    await axios.post(`${API_BASE_URL}/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    localStorage.removeItem('authToken');
+    console.log('User logged out successfully.');
+  } catch (error) {
+    console.error('Logout error:', error);
+    throw error;
+  }
 }

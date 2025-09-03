@@ -1,4 +1,4 @@
-import { createProva } from './api';
+import { createProva } from './api.ts';
 
 export function setupCreateExam(element: HTMLElement) {
   element.innerHTML = `

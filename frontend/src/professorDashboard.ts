@@ -1,4 +1,4 @@
-import { logoutUser } from './api.ts';
+import { logoutUser } from './api';
 
 export function setupProfessorDashboard(element: HTMLElement) {
   element.innerHTML = `
