@@ -198,6 +198,8 @@ interface TentativaResponse {
     resposta: string;
     pontuacao_obtida?: number;
     questao: {
+
+
       texto: string;
       resposta_correta?: string;
     };
@@ -216,4 +218,10 @@ export async function getTentativaById(token: string, tentativaId: number): Prom
     console.error('Get tentativa by ID error:', error);
     throw error;
   }
+}
+
+export function logoutUser(): void {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('user_type');
+  window.location.hash = '#login';
 }
