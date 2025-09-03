@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, Enum
-from sqlalchemy.ext.declarative import declarative_base
+from ..database import Base
 from sqlalchemy.sql import func
 import enum
 
-Base = declarative_base()
+
 
 class TipoUsuario(str, enum.Enum):
     aluno = "aluno"

@@ -41,6 +41,24 @@ def start_tentativa(prova_id: int, db: Session = Depends(get_db), current_user: 
     db.refresh(db_tentativa)
     return db_tentativa
 
+@router.delete("/{tentativa_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_tentativa(tentativa_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+    db_tentativa = db.query(models.Tentativa).filter(models.Tentativa.id == tentativa_id).first()
+    if not db_tentativa:
+        raise HTTPException(status_code=404, detail="Tentativa not found")
+    
+    if current_user.tipo == models.TipoUsuario.aluno and db_tentativa.aluno_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this attempt")
+    
+    if current_user.tipo == models.TipoUsuario.professor:
+        db_prova = db.query(models.Prova).filter(models.Prova.id == db_tentativa.prova_id, models.Prova.professor_id == current_user.id).first()
+        if not db_prova:
+            raise HTTPException(status_code=403, detail="Not authorized to delete this attempt")
+
+    db.delete(db_tentativa)
+    db.commit()
+    return {"ok": True}
+
 @router.post("/{tentativa_id}/submit", response_model=schemas.Tentativa)
 def submit_tentativa(tentativa_id: int, respostas: schemas.TentativaResposta, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_aluno)):
     db_tentativa = db.query(models.Tentativa).filter(

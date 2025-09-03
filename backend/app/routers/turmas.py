@@ -21,9 +21,41 @@ def create_turma(turma: schemas.TurmaCreate, db: Session = Depends(get_db), curr
     db.refresh(db_turma)
     return db_turma
 
+@router.put("/{turma_id}", response_model=schemas.Turma)
+def update_turma(turma_id: int, turma: schemas.TurmaCreate, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
+    db_turma = db.query(models.Turma).filter(models.Turma.id == turma_id, models.Turma.professor_id == current_user.id).first()
+    if not db_turma:
+        raise HTTPException(status_code=404, detail="Turma not found or not owned by professor")
+    
+    for key, value in turma.dict().items():
+        setattr(db_turma, key, value)
+    
+    db.commit()
+    db.refresh(db_turma)
+    return db_turma
+
 @router.get("/professor", response_model=List[schemas.Turma])
 def get_professor_turmas(db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
     return db.query(models.Turma).filter(models.Turma.professor_id == current_user.id).all()
+
+@router.get("/{turma_id}", response_model=schemas.Turma)
+def get_turma(turma_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+    db_turma = db.query(models.Turma).filter(models.Turma.id == turma_id).first()
+    if not db_turma:
+        raise HTTPException(status_code=404, detail="Turma not found")
+    
+    if current_user.tipo == models.TipoUsuario.professor and db_turma.professor_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this turma")
+    
+    if current_user.tipo == models.TipoUsuario.aluno:
+        db_aluno_turma = db.query(models.AlunoTurma).filter(
+            models.AlunoTurma.aluno_id == current_user.id,
+            models.AlunoTurma.turma_id == turma_id
+        ).first()
+        if not db_aluno_turma:
+            raise HTTPException(status_code=403, detail="Not authorized to view this turma")
+
+    return db_turma
 
 @router.post("/entrar", response_model=schemas.AlunoTurma)
 def join_turma(codigo: str, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_aluno)):
@@ -63,6 +95,16 @@ def remove_aluno_from_turma(turma_id: int, aluno_id: int, db: Session = Depends(
         raise HTTPException(status_code=404, detail="Aluno not found in this turma")
     
     db.delete(db_aluno_turma)
+    db.commit()
+    return {"ok": True}
+
+@router.delete("/{turma_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_turma(turma_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
+    db_turma = db.query(models.Turma).filter(models.Turma.id == turma_id, models.Turma.professor_id == current_user.id).first()
+    if not db_turma:
+        raise HTTPException(status_code=404, detail="Turma not found or not owned by professor")
+    
+    db.delete(db_turma)
     db.commit()
     return {"ok": True}
 

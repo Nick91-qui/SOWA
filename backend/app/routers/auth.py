@@ -4,19 +4,14 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from .. import schemas, models
-from ..database import SessionLocal, engine
+from ..database import engine, get_db
 from ..utils import security
 
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 @router.post("/register", response_model=schemas.UsuarioInDB)
 def register_user(user: schemas.UsuarioCreate, db: Session = Depends(get_db)):

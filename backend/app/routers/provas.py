@@ -45,6 +45,53 @@ def create_prova(prova: schemas.ProvaCreate, db: Session = Depends(get_db), curr
     db.refresh(db_prova)
     return db_prova
 
+@router.put("/{prova_id}", response_model=schemas.Prova)
+def update_prova(prova_id: int, prova: schemas.ProvaCreate, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
+    db_prova = db.query(models.Prova).filter(models.Prova.id == prova_id, models.Prova.professor_id == current_user.id).first()
+    if not db_prova:
+        raise HTTPException(status_code=404, detail="Prova not found or not owned by professor")
+    
+    for key, value in prova.dict(exclude_unset=True).items():
+        if key == "questoes":
+            # Handle questions separately
+            # Delete existing questions
+            db.query(models.Questao).filter(models.Questao.prova_id == prova_id).delete()
+            for questao_data in value:
+                db_questao = models.Questao(
+                    prova_id=db_prova.id,
+                    enunciado=questao_data.enunciado,
+                    alternativas=questao_data.alternativas,
+                    resposta_correta=questao_data.resposta_correta,
+                    ordem=questao_data.ordem
+                )
+                db.add(db_questao)
+        elif key == "turmas_ids":
+            # Handle turmas separately
+            # Delete existing prova_turma relationships
+            db.query(models.ProvaTurma).filter(models.ProvaTurma.prova_id == prova_id).delete()
+            for turma_id in value:
+                db_prova_turma = models.ProvaTurma(
+                    prova_id=db_prova.id,
+                    turma_id=turma_id
+                )
+                db.add(db_prova_turma)
+        else:
+            setattr(db_prova, key, value)
+    
+    db.commit()
+    db.refresh(db_prova)
+    return db_prova
+
+@router.delete("/{prova_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_prova(prova_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
+    db_prova = db.query(models.Prova).filter(models.Prova.id == prova_id, models.Prova.professor_id == current_user.id).first()
+    if not db_prova:
+        raise HTTPException(status_code=404, detail="Prova not found or not owned by professor")
+    
+    db.delete(db_prova)
+    db.commit()
+    return {"ok": True}
+
 @router.get("/professor", response_model=List[schemas.Prova])
 def get_professor_provas(db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_professor)):
     return db.query(models.Prova).filter(models.Prova.professor_id == current_user.id).all()
