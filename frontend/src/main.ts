@@ -19,6 +19,7 @@ const routes: { [key: string]: (element: HTMLElement) => void } = {
   '#register': setupRegister,
   '#dashboard': (element: HTMLElement) => {
     const userType = localStorage.getItem('user_type'); // Assuming user_type is stored in localStorage after login
+    console.log('User type from localStorage:', userType);
     if (userType === 'professor') {
       setupProfessorDashboard(element);
     } else if (userType === 'aluno') {
@@ -36,6 +37,7 @@ const routes: { [key: string]: (element: HTMLElement) => void } = {
 
 function router() {
   const hash = window.location.hash;
+  console.log('Current hash:', hash);
   const setupFunction = routes[hash] || routes[''];
   setupFunction(appContent);
 }

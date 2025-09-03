@@ -1,4 +1,4 @@
-import { loginUser } from './api.ts';
+import { loginUser, getCurrentUserType } from './api.ts';
 
 export function setupLogin(element: HTMLElement) {
   element.innerHTML = `
@@ -25,17 +25,27 @@ export function setupLogin(element: HTMLElement) {
     try {
       const token = await loginUser(email, password);
       if (token) {
+        console.log('Full token object:', token);
         localStorage.setItem('access_token', token.access_token);
         localStorage.setItem('token_type', token.token_type);
-        localStorage.setItem('user_type', token.user_type); // Store user type
+        
+        // Get user_type from backend if not in token
+        const userType = token.user_type || await getCurrentUserType();
+        console.log('User type determined:', userType);
+        if (userType) {
+          localStorage.setItem('user_type', userType);
+        }
         if (loginMessage) loginMessage.textContent = 'Login successful!';
         // Redirect to dashboard or home page
         window.location.hash = '#dashboard';
+        console.log('Redirecting to #dashboard');
       } else {
         if (loginMessage) loginMessage.textContent = 'Login failed. Please check your credentials.';
       }
     } catch (error: any) {
-      if (loginMessage) loginMessage.textContent = `Error: ${error.response?.data?.detail || error.message}`;
+      if (loginMessage) loginMessage.textContent = error.response?.data?.detail === 'Incorrect username or password' 
+        ? 'Usuário ou senha incorretos' 
+        : `Error: ${error.response?.data?.detail || error.message}`;
     }
   });
 }

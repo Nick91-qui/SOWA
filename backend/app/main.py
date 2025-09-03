@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
-from .routers import auth, turmas, provas, tentativas
+from .routers import auth, turmas, provas, tentativas, users
 
 Base.metadata.create_all(bind=engine)
 
@@ -22,6 +22,7 @@ app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(turmas.router)
 app.include_router(provas.router)
 app.include_router(tentativas.router)
+app.include_router(users.router)
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
