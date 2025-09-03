@@ -5,7 +5,7 @@ from datetime import datetime
 
 from .. import schemas, models
 from ..database import get_db
-from ..utils.dependencies import get_current_user, get_current_active_professor, get_current_active_aluno
+from ..utils.dependencies import get_current_active_user, get_current_active_professor, get_current_active_aluno
 
 router = APIRouter(
     prefix="/tentativas",
@@ -42,7 +42,7 @@ def start_tentativa(prova_id: int, db: Session = Depends(get_db), current_user: 
     return db_tentativa
 
 @router.delete("/{tentativa_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_tentativa(tentativa_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+def delete_tentativa(tentativa_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_user)): 
     db_tentativa = db.query(models.Tentativa).filter(models.Tentativa.id == tentativa_id).first()
     if not db_tentativa:
         raise HTTPException(status_code=404, detail="Tentativa not found")
@@ -118,7 +118,7 @@ def liberar_feedback(tentativa_id: int, db: Session = Depends(get_db), current_u
     return db_tentativa
 
 @router.get("/{tentativa_id}", response_model=schemas.Tentativa)
-def get_tentativa_by_id(tentativa_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+def get_tentativa_by_id(tentativa_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_user)):
     db_tentativa = db.query(models.Tentativa).filter(models.Tentativa.id == tentativa_id).first()
     if not db_tentativa:
         raise HTTPException(status_code=404, detail="Tentativa not found")

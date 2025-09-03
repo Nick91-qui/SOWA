@@ -4,7 +4,7 @@ from typing import List
 
 from .. import schemas, models
 from ..database import get_db
-from ..utils.dependencies import get_current_user, get_current_active_professor, get_current_active_aluno
+from ..utils.dependencies import get_current_active_user, get_current_active_professor, get_current_active_aluno
 
 router = APIRouter(
     prefix="/provas",
@@ -103,7 +103,7 @@ def get_aluno_provas(db: Session = Depends(get_db), current_user: models.Usuario
     return db.query(models.Prova).filter(models.Prova.id.in_(provas_ids)).all()
 
 @router.get("/{prova_id}", response_model=schemas.Prova)
-def get_prova(prova_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+def get_prova(prova_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_user)):
     db_prova = db.query(models.Prova).filter(models.Prova.id == prova_id).first()
     if not db_prova:
         raise HTTPException(status_code=404, detail="Prova not found")

@@ -43,6 +43,7 @@ export function setupLogin(element: HTMLElement) {
         if (loginMessage) loginMessage.textContent = 'Login failed. Please check your credentials.';
       }
     } catch (error: any) {
+      console.error('Login error details:', error.response?.data);
       if (loginMessage) loginMessage.textContent = error.response?.data?.detail === 'Incorrect username or password' 
         ? 'Usuário ou senha incorretos' 
         : `Error: ${error.response?.data?.detail || error.message}`;

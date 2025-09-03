@@ -5,7 +5,7 @@ import secrets
 
 from .. import schemas, models
 from ..database import get_db
-from ..utils.dependencies import get_current_user, get_current_active_professor, get_current_active_aluno
+from ..utils.dependencies import get_current_active_user, get_current_active_professor, get_current_active_aluno
 
 router = APIRouter(
     prefix="/turmas",
@@ -39,7 +39,7 @@ def get_professor_turmas(db: Session = Depends(get_db), current_user: models.Usu
     return db.query(models.Turma).filter(models.Turma.professor_id == current_user.id).all()
 
 @router.get("/{turma_id}", response_model=schemas.Turma)
-def get_turma(turma_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+def get_turma(turma_id: int, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_active_user)):
     db_turma = db.query(models.Turma).filter(models.Turma.id == turma_id).first()
     if not db_turma:
         raise HTTPException(status_code=404, detail="Turma not found")

@@ -220,7 +220,7 @@ export async function getTentativaById(token: string, tentativaId: number): Prom
 
 export async function logoutUser(): Promise<void> {
   try {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('access_token');
     if (!token) {
       console.warn('No auth token found, cannot log out.');
       return;
@@ -230,7 +230,7 @@ export async function logoutUser(): Promise<void> {
         Authorization: `Bearer ${token}`,
       },
     });
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('access_token');
     console.log('User logged out successfully.');
   } catch (error) {
     console.error('Logout error:', error);
